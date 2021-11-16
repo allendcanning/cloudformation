@@ -1,0 +1,53 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'AWS Cloudformation stack for LightSail instance'
+Parameters:
+  InstanceName:
+    Type: String
+    Description: "The name of the instance"
+  BundleId:
+    Type: String
+    Description: "The bundle name, default is nano_2_0"
+    Default: nano_2_0
+    AllowedValues:
+      - nano_2_0
+      - micro_2_0
+      - small_2_0
+      - medium_2_0
+      - large_2_0
+  BluePrintId:
+    Type: String
+    Description: "The blueprint ID, default is wordpress"
+    Default: wordpress
+Resources:
+  InstanceWebsite:
+    Type: AWS::Lightsail::Instance
+    Properties: 
+      BlueprintId: !Ref BluePrintId
+      BundleId: !Ref BundleId
+      InstanceName: !Ref InstanceName
+      Networking: 
+        Ports:
+          - AccessDirection: inbound
+            AccessFrom: "Anywhere (0.0.0.0/0)"
+            AccessType: Public
+            CidrListAliases:
+              - lightsail-connect
+            CommonName: 'ssh'
+            FromPort: 22
+            Protocol: tcp
+            ToPort: 22
+          - AccessDirection: inbound
+            AccessFrom: "Anywhere (0.0.0.0/0)"
+            AccessType: Public
+            CommonName: 'web'
+            FromPort: 80
+            Protocol: tcp
+            ToPort: 80
+          - AccessDirection: inbound
+            AccessFrom: "Anywhere (0.0.0.0/0)"
+            AccessType: Public
+            CommonName: 'ssl'
+            FromPort: 443
+            Protocol: tcp
+            ToPort: 443
